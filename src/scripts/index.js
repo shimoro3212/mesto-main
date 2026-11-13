@@ -366,25 +366,21 @@ allPopups.forEach((popup) => {
 });
 
 // Загружаем данные пользователя и карточки с сервера
-if (!import.meta.env.VITE_MESTO_COHORT || !import.meta.env.VITE_MESTO_TOKEN) {
-  statusElement.textContent = "Подключение к серверу ещё не настроено.";
-} else {
-  statusElement.textContent = "Загрузка…";
-  Promise.all([getCardList(), getUserInfo()])
-    .then(([cards, userData]) => {
-      currentUserId = userData._id;
-      profileControls.forEach((control) => {
-        control.disabled = false;
-      });
-      statusElement.textContent = "";
-      renderUserInfo(userData);
-      cards.forEach((cardData) => {
-        placesWrap.append(
-          createCardElement(cardData, currentUserId, cardHandlers),
-        );
-      });
-    })
-    .catch((err) => {
-      showRequestError(err);
+statusElement.textContent = "Загрузка…";
+Promise.all([getCardList(), getUserInfo()])
+  .then(([cards, userData]) => {
+    currentUserId = userData._id;
+    profileControls.forEach((control) => {
+      control.disabled = false;
     });
-}
+    statusElement.textContent = "";
+    renderUserInfo(userData);
+    cards.forEach((cardData) => {
+      placesWrap.append(
+        createCardElement(cardData, currentUserId, cardHandlers),
+      );
+    });
+  })
+  .catch((err) => {
+    showRequestError(err);
+  });

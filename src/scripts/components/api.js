@@ -1,7 +1,9 @@
 const config = {
-  baseUrl: `https://mesto.nomoreparties.co/v1/${encodeURIComponent(import.meta.env.VITE_MESTO_COHORT || "")}`,
+  baseUrl: `https://mesto.nomoreparties.co/v1/${encodeURIComponent(import.meta.env.VITE_MESTO_COHORT || "apf-cohort-203")}`,
   headers: {
-    authorization: import.meta.env.VITE_MESTO_TOKEN || "",
+    authorization:
+      import.meta.env.VITE_MESTO_TOKEN ||
+      "e038f233-226d-42f9-a6d1-094f57cb8a5e",
     "Content-Type": "application/json",
   },
 };
