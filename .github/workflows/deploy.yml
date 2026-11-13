@@ -6,11 +6,18 @@ on:
       - main
   workflow_dispatch:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: production-pages
+  cancel-in-progress: false
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      PUBLIC_PAGES_TOKEN: ${{ secrets.PUBLIC_PAGES_TOKEN }}
+      MESTO_PAGES_DEPLOY_KEY: ${{ secrets.MESTO_PAGES_DEPLOY_KEY }}
       VITE_MESTO_COHORT: ${{ secrets.VITE_MESTO_COHORT }}
       VITE_MESTO_TOKEN: ${{ secrets.VITE_MESTO_TOKEN }}
 
@@ -31,14 +38,14 @@ jobs:
         run: npm run build
 
       - name: Explain deployment setup
-        if: env.PUBLIC_PAGES_TOKEN == '' || env.VITE_MESTO_COHORT == '' || env.VITE_MESTO_TOKEN == ''
-        run: echo "Build checked. Add PUBLIC_PAGES_TOKEN, VITE_MESTO_COHORT and VITE_MESTO_TOKEN secrets to enable publication."
+        if: env.MESTO_PAGES_DEPLOY_KEY == '' || env.VITE_MESTO_COHORT == '' || env.VITE_MESTO_TOKEN == ''
+        run: echo "Build checked. Configure MESTO_PAGES_DEPLOY_KEY, VITE_MESTO_COHORT and VITE_MESTO_TOKEN secrets to enable publication."
 
       - name: Deploy to GitHub Pages
-        if: env.PUBLIC_PAGES_TOKEN != '' && env.VITE_MESTO_COHORT != '' && env.VITE_MESTO_TOKEN != ''
+        if: env.MESTO_PAGES_DEPLOY_KEY != '' && env.VITE_MESTO_COHORT != '' && env.VITE_MESTO_TOKEN != ''
         uses: peaceiris/actions-gh-pages@v3
         with:
-          personal_token: ${{ secrets.PUBLIC_PAGES_TOKEN }}
+          deploy_key: ${{ secrets.MESTO_PAGES_DEPLOY_KEY }}
           external_repository: ${{ secrets.PUBLIC_PAGES_REPO || 'shimoro3212/mesto-production' }}
           publish_dir: ./dist
           publish_branch: ${{ secrets.PUBLIC_PAGES_BRANCH || 'main' }}
