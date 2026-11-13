@@ -1,0 +1,47 @@
+name: Deploy to Public Pages Repository
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      PUBLIC_PAGES_TOKEN: ${{ secrets.PUBLIC_PAGES_TOKEN }}
+      VITE_MESTO_COHORT: ${{ secrets.VITE_MESTO_COHORT }}
+      VITE_MESTO_TOKEN: ${{ secrets.VITE_MESTO_TOKEN }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+            node-version: '>=22.12'
+            cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
+
+      - name: Explain deployment setup
+        if: env.PUBLIC_PAGES_TOKEN == '' || env.VITE_MESTO_COHORT == '' || env.VITE_MESTO_TOKEN == ''
+        run: echo "Build checked. Add PUBLIC_PAGES_TOKEN, VITE_MESTO_COHORT and VITE_MESTO_TOKEN secrets to enable publication."
+
+      - name: Deploy to GitHub Pages
+        if: env.PUBLIC_PAGES_TOKEN != '' && env.VITE_MESTO_COHORT != '' && env.VITE_MESTO_TOKEN != ''
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          personal_token: ${{ secrets.PUBLIC_PAGES_TOKEN }}
+          external_repository: ${{ secrets.PUBLIC_PAGES_REPO || 'shimoro3212/mesto-production' }}
+          publish_dir: ./dist
+          publish_branch: ${{ secrets.PUBLIC_PAGES_BRANCH || 'main' }}
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
+          commit_message: 'deploy: update build'
