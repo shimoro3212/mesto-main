@@ -64,11 +64,23 @@ const setEventListeners = (formElement, settings) => {
   const buttonElement = formElement.querySelector(
     settings.submitButtonSelector,
   );
-  formElement.querySelectorAll("input").forEach((inputElement) => {
+  inputList.forEach((inputElement) => {
     inputElement.setAttribute("aria-describedby", `${inputElement.id}-error`);
   });
 
   toggleButtonState(inputList, buttonElement, settings);
+
+  // Проверяем отправку до обработчика запроса в index.js.
+  formElement.addEventListener("submit", (evt) => {
+    if (hasInvalidInput(inputList)) {
+      evt.preventDefault();
+      evt.stopImmediatePropagation();
+      inputList.forEach((inputElement) => {
+        checkInputValidity(formElement, inputElement, settings);
+      });
+      toggleButtonState(inputList, buttonElement, settings);
+    }
+  }, { capture: true });
 
   inputList.forEach((inputElement) => {
     inputElement.addEventListener("input", () => {

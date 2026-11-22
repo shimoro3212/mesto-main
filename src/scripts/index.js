@@ -109,7 +109,7 @@ const showRequestError = (error) => {
 };
 
 const startFormRequest = (form, button) => {
-  if (pendingForms.has(form) || !form.checkValidity()) return false;
+  if (pendingForms.has(form)) return false;
   pendingForms.add(form);
   button.disabled = true;
   statusElement.textContent = "";
@@ -124,7 +124,7 @@ const finishFormRequest = (form, button) => {
   form.querySelectorAll("input").forEach((input) => {
     input.readOnly = false;
   });
-  button.disabled = !form.checkValidity();
+  button.disabled = false;
 };
 
 // Меняет текст кнопки на время отправки данных на сервер
